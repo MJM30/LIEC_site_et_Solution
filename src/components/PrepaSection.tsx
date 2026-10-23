@@ -123,9 +123,9 @@ export default function PrepaSection() {
             <div className="pt-space-md">
               <Link
                 className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-primary text-surface font-label-lg text-label-lg font-bold shadow-md hover:bg-primary-container hover:-translate-y-0.5 transition-all duration-200"
-                href="#candidature"
+                href="/demarrer-mon-projet"
               >
-                Découvrir le programme PREPA
+                S’inscrire au programme PREPA
                 <span className="material-symbols-outlined ml-2 text-xl">arrow_forward</span>
               </Link>
             </div>

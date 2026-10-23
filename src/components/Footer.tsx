@@ -31,13 +31,12 @@ export default function Footer() {
                   className="text-secondary-fixed hover:underline"
                   href="mailto:contact@liec-education.com"
                 >
-                  contacts@liecconsulting.com
+                  contact@liec-education.com
                 </a>
               </p>
               <p>
-                Assistance WhatsApp pro :{" "} <br />
-                <span className="text-secondary-fixed">+243 803 615 543</span><br />
-                <span className="text-secondary-fixed">+33 7 69 86 09 13</span>
+                Assistance WhatsApp pro :{" "}
+                <span className="text-secondary-fixed">+33 4 72 00 00 00</span>
               </p>
             </div>
           </div>
@@ -49,14 +48,14 @@ export default function Footer() {
             </h3>
             <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm">
               <li className="py-0.5">
-                <Link className="text-surface-variant hover:text-surface transition-colors" href="#accueil">
+                <Link className="text-surface-variant hover:text-surface transition-colors" href="/">
                   Accueil
                 </Link>
               </li>
               <li className="py-0.5">
                 <Link
                   className="text-surface-variant hover:text-surface transition-colors"
-                  href="#etudier-en-france"
+                  href="/etudier-en-france"
                 >
                   Étudier en France
                 </Link>
@@ -64,22 +63,25 @@ export default function Footer() {
               <li className="py-0.5">
                 <Link
                   className="text-surface-variant hover:text-surface transition-colors"
-                  href="#liec-france-prepa"
+                  href="/a-propos"
                 >
-                  LIEC-France PREPA
+                  À propos
                 </Link>
               </li>
               <li className="py-0.5">
-                <Link className="text-surface-variant hover:text-surface transition-colors" href="#nos-services">
+                <Link
+                  className="text-surface-variant hover:text-surface transition-colors"
+                  href="/nos-services"
+                >
                   Nos services
                 </Link>
               </li>
               <li className="py-0.5">
                 <Link
                   className="text-surface-variant hover:text-surface transition-colors"
-                  href="#temoignages-ressources"
+                  href="/contact"
                 >
-                  FAQ &amp; Ressources
+                  Contact
                 </Link>
               </li>
             </ul>
@@ -118,17 +120,14 @@ export default function Footer() {
         <div className="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-surface-variant">
           <p>© 2026 LIEC — Lyon International Education Consulting. Tous droits réservés.</p>
           <div className="flex flex-wrap items-center gap-space-md">
-            <Link className="hover:text-surface transition-colors" href="#mentions-legales">
+            <Link className="hover:text-surface transition-colors" href="/a-propos">
               Mentions légales
             </Link>
             <Link
               className="hover:text-surface transition-colors"
-              href="#politique-confidentialite"
+              href="/a-propos"
             >
               Politique de confidentialité (RGPD)
-            </Link>
-            <Link className="text-secondary-fixed hover:underline" href="#espace-admin">
-              Accès Conseillers
             </Link>
           </div>
         </div>

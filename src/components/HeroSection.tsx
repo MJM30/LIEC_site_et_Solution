@@ -22,24 +22,24 @@ const HERO_SLIDES: HeroSlide[] = [
     badgeTag: "France 2026",
   },
   {
-    src: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1000&q=80",
-    alt: "Étudiants préparant leurs dossiers académiques en groupe",
+    src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1000&q=80",
+    alt: "Étudiants noirs préparant leurs dossiers académiques en groupe",
     icon: "school",
     badgeTitle: "Programme LIEC-France PREPA",
     badgeSubtitle: "Excellence académique & entretiens",
     badgeTag: "Prépa Intensive",
   },
   {
-    src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80",
-    alt: "Séance de travail et d'orientation avec des étudiants",
+    src: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1000&q=80",
+    alt: "Étudiante noire travaillant sur son projet d'études",
     icon: "verified",
     badgeTitle: "Orientation sur-mesure",
     badgeSubtitle: "Dossier solide & projet cohérent",
     badgeTag: "100% Structuré",
   },
   {
-    src: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1000&q=80",
-    alt: "Campus universitaire et réussite étudiante",
+    src: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=1000&q=80",
+    alt: "Étudiant africain sur le campus universitaire",
     icon: "flight_takeoff",
     badgeTitle: "Suivi Campus France & Visa",
     badgeSubtitle: "De l'admission jusqu'à l'installation",
@@ -101,7 +101,7 @@ export default function HeroSection() {
             <div className="flex flex-wrap items-center gap-space-md pt-space-xs">
               <Link
                 className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-tertiary-fixed text-primary font-label-lg text-label-lg font-bold shadow-md hover:bg-tertiary-fixed-dim hover:-translate-y-0.5 transition-all duration-200"
-                href="#candidature"
+                href="/demarrer-mon-projet"
               >
                 <span
                   className="material-symbols-outlined mr-2 text-xl"
@@ -113,10 +113,10 @@ export default function HeroSection() {
               </Link>
               <Link
                 className="inline-flex items-center justify-center px-6 py-4 rounded-xl bg-surface-container text-primary font-label-lg text-label-lg font-semibold hover:bg-surface-container-high hover:-translate-y-0.5 transition-all duration-200"
-                href="#liec-france-prepa"
+                href="/a-propos"
               >
                 <span className="material-symbols-outlined mr-2 text-xl">school</span>
-                Découvrir PREPA
+                Découvrir LIEC &amp; PREPA
               </Link>
             </div>
 

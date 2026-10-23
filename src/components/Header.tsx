@@ -1,11 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navItems = [
+    { label: "Accueil", href: "/" },
+    { label: "Étudier en France", href: "/etudier-en-france" },
+    { label: "À propos", href: "/a-propos" },
+    { label: "Nos services", href: "/nos-services" },
+    { label: "Contact", href: "/contact" },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
   return (
     <header className="fixed top-0 w-full z-50 bg-surface/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(21,58,112,0.06)]">
@@ -34,44 +48,30 @@ export default function Header() {
 
         {/* Desktop Nav Links */}
         <nav className="hidden xl:flex items-center gap-space-md">
-          <Link
-            aria-current="page"
-            className="transition-colors text-primary font-bold bg-surface-container-high px-space-md py-space-xs rounded-lg"
-            href="#accueil"
-          >
-            Accueil
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg"
-            href="#etudier-en-france"
-          >
-            Étudier en France
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg"
-            href="#liec-france-prepa"
-          >
-            À propos
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg"
-            href="#nos-services"
-          >
-            Nos services
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg"
-            href="#temoignages-ressources"
-          >
-            Témoignages &amp; ressources
-          </Link>
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                aria-current={active ? "page" : undefined}
+                className={
+                  active
+                    ? "transition-colors text-primary font-bold bg-surface-container-high px-space-md py-space-xs rounded-lg font-label-lg text-label-lg"
+                    : "text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg px-space-sm py-space-xs"
+                }
+                href={item.href}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-space-sm">
           <Link
             className="inline-flex items-center justify-center px-space-lg py-space-sm rounded-lg bg-tertiary-fixed text-primary font-label-lg text-label-lg font-bold shadow-[0_2px_8px_rgba(21,58,112,0.12)] hover:bg-tertiary-fixed-dim hover:text-primary transition-all"
-            href="#candidature"
+            href="/demarrer-mon-projet"
           >
             Démarrer mon projet
           </Link>
@@ -93,41 +93,23 @@ export default function Header() {
       {/* Mobile navigation drawer */}
       {mobileMenuOpen && (
         <div className="xl:hidden bg-surface border-t border-surface-container-high px-margin-mobile py-4 shadow-lg flex flex-col gap-3">
-          <Link
-            className="text-primary font-bold bg-surface-container-high px-4 py-2 rounded-lg"
-            href="#accueil"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Accueil
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface px-4 py-2 font-medium"
-            href="#etudier-en-france"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Étudier en France
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface px-4 py-2 font-medium"
-            href="#liec-france-prepa"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            À propos
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface px-4 py-2 font-medium"
-            href="#nos-services"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Nos services
-          </Link>
-          <Link
-            className="text-on-surface-variant hover:text-on-surface px-4 py-2 font-medium"
-            href="#temoignages-ressources"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Témoignages &amp; ressources
-          </Link>
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                className={
+                  active
+                    ? "text-primary font-bold bg-surface-container-high px-4 py-2 rounded-lg"
+                    : "text-on-surface-variant hover:text-on-surface px-4 py-2 font-medium"
+                }
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       )}
     </header>

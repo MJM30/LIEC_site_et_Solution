@@ -14,9 +14,9 @@ export const metadata: Metadata = {
   description:
     "Construis ton projet d’études en France avec LIEC. De l’orientation au dossier de candidature, nous t’accompagnons pour avancer avec méthode et confiance.",
   icons: {
-    icon: "/logo_LIEC (1).jpeg",
-    shortcut: "/logo_LIEC (1).jpeg",
-    apple: "/logo_LIEC (1).jpeg",
+    icon: "/logo_LIEC (1).png",
+    shortcut: "/logo_LIEC (1).png",
+    apple: "/logo_LIEC (1).png",
   },
 };
 
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={plusJakartaSans.variable}>
       <head>
-        <link rel="icon" href="/logo_LIEC (1).jpeg" type="image/jpeg" />
+        <link rel="icon" href="/logo_LIEC (1).png" type="image/png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link

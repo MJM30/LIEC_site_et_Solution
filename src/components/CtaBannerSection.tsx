@@ -28,7 +28,7 @@ export default function CtaBannerSection() {
         <div className="flex flex-col sm:flex-row items-center gap-space-md w-full justify-center">
           <Link
             className="w-full sm:w-auto inline-flex items-center justify-center px-10 py-5 rounded-xl bg-tertiary-fixed text-primary font-label-lg text-label-lg font-bold shadow-xl hover:bg-tertiary-fixed-dim hover:-translate-y-0.5 transition-all duration-200"
-            href="#contact"
+            href="/contact"
           >
             <span
               className="material-symbols-outlined mr-2 text-xl"
@@ -40,7 +40,7 @@ export default function CtaBannerSection() {
           </Link>
           <Link
             className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-5 rounded-xl bg-surface/10 text-surface font-label-lg text-label-lg font-semibold hover:bg-surface/20 transition-all duration-200"
-            href="#etudier-en-france"
+            href="/etudier-en-france"
           >
             Consulter le guide des démarches
           </Link>
