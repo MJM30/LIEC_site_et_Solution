@@ -76,7 +76,7 @@ export default function AProposPage() {
         "Dispositif d’excellence pour la préparation méthodologique, académique et la réussite des entretiens d’admission.",
     },
     {
-      name: "SCI DANIVA",
+      name: "DANOVA Société Civile Immobilière",
       category: "Logement",
       icon: "apartment",
       description:
