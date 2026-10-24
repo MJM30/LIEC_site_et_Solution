@@ -70,10 +70,17 @@ export default function AProposPage() {
     },
     {
       name: "France PREPA",
-      category: "Formation",
+      category: "Prépa",
       icon: "school",
       description:
         "Dispositif d’excellence pour la préparation méthodologique, académique et la réussite des entretiens d’admission.",
+    },
+    {
+      name: "My French Degree",
+      category: "Formation",
+      icon: "workspace_premium",
+      description:
+        "Orientation et accompagnement vers les diplômes et cursus d’enseignement supérieur reconnus en France.",
     },
     {
       name: "DANOVA Société Civile Immobilière",
@@ -234,7 +241,7 @@ export default function AProposPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
                   {liecPartners.map((partner, idx) => (
                     <div
                       key={idx}
