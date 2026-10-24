@@ -77,7 +77,7 @@ export default function AProposPage() {
     },
     {
       name: "My French Degree",
-      category: "Formation",
+      category: "",
       icon: "workspace_premium",
       description:
         "Orientation et accompagnement vers les diplômes et cursus d’enseignement supérieur reconnus en France.",
@@ -254,15 +254,19 @@ export default function AProposPage() {
                               {partner.icon}
                             </span>
                           </div>
-                          <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm font-bold uppercase tracking-wider">
-                            {partner.category}
-                          </span>
+                          {partner.category && (
+                            <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm font-bold uppercase tracking-wider">
+                              {partner.category}
+                            </span>
+                          )}
                         </div>
                         <h3 className="font-headline-md text-primary font-extrabold mb-2">
                           {partner.name}{" "}
-                          <span className="text-secondary font-semibold text-base">
-                            ({partner.category})
-                          </span>
+                          {partner.category && (
+                            <span className="text-secondary font-semibold text-base">
+                              ({partner.category})
+                            </span>
+                          )}
                         </h3>
                         <p className="font-body-md text-on-surface-variant leading-relaxed">
                           {partner.description}
