@@ -79,9 +79,14 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <p className="font-label-sm text-on-surface-variant uppercase">
-                          Assistance WhatsApp Pro
+                          Téléphone / WhatsApp
                         </p>
-                        <p className="font-label-lg text-primary font-bold">+33 4 72 00 00 00</p>
+                        <a
+                          href="tel:+243803615543"
+                          className="font-label-lg text-primary font-bold hover:text-secondary transition-colors"
+                        >
+                          +243 803 615 543
+                        </a>
                       </div>
                     </div>
 
@@ -93,8 +98,25 @@ export default function ContactPage() {
                         <p className="font-label-sm text-on-surface-variant uppercase">
                           Email Officiel
                         </p>
-                        <p className="font-label-lg text-primary font-bold">
-                          contact@liec-education.com
+                        <a
+                          href="mailto:contacts@liecconsulting.com"
+                          className="font-label-lg text-primary font-bold hover:text-secondary transition-colors break-all"
+                        >
+                          contacts@liecconsulting.com
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-2 p-4 rounded-2xl bg-surface-container-low flex items-start gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-secondary/15 text-secondary flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="material-symbols-outlined">location_on</span>
+                      </div>
+                      <div>
+                        <p className="font-label-sm text-on-surface-variant uppercase font-bold">
+                          Adresse à Kinshasa
+                        </p>
+                        <p className="font-body-sm text-primary font-semibold leading-snug mt-0.5">
+                          Avenue Tropique, n°27/419, 3ème rue, Immeuble MAMAN NYEMBO, Q/ Résidentiel, C/ Limete.
                         </p>
                       </div>
                     </div>
@@ -304,8 +326,12 @@ export default function ContactPage() {
                     <p className="font-body-sm text-on-surface-variant leading-relaxed mb-4">
                       Entretiens d’orientation en présentiel, réunions d’information avec les parents, préparation Campus France et sessions LIEC-France PREPA.
                     </p>
-                    <div className="text-xs text-primary font-semibold">
-                      📍 Kinshasa (République Démocratique du Congo)
+                    <div className="flex flex-col gap-1.5 text-xs text-primary font-semibold">
+                      <div>
+                        📍 Avenue Tropique, n°27/419, 3ème rue, Immeuble MAMAN NYEMBO, Q/ Résidentiel, C/ Limete.
+                      </div>
+                      <div>📞 +243 803 615 543</div>
+                      <div>✉️ contacts@liecconsulting.com</div>
                     </div>
                   </div>
 

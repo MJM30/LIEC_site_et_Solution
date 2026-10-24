@@ -23,20 +23,31 @@ export default function Footer() {
             </p>
             <div className="flex flex-col gap-space-xs font-body-sm text-body-sm text-surface-variant">
               <p className="text-surface font-medium">
-                Bureaux : Lyon (France) &amp; Kinshasa (Afrique Centrale)
+                Bureaux : Lyon (France) &amp; Kinshasa (RDC)
+              </p>
+              <p>
+                Adresse à Kinshasa :{" "}
+                <span className="text-surface">
+                  Avenue Tropique, n°27/419, 3ème rue, Immeuble MAMAN NYEMBO, Q/ Résidentiel, C/ Limete.
+                </span>
               </p>
               <p>
                 Email officiel :{" "}
                 <a
                   className="text-secondary-fixed hover:underline"
-                  href="mailto:contact@liec-education.com"
+                  href="mailto:contacts@liecconsulting.com"
                 >
-                  contact@liec-education.com
+                  contacts@liecconsulting.com
                 </a>
               </p>
               <p>
-                Assistance WhatsApp pro :{" "}
-                <span className="text-secondary-fixed">+33 4 72 00 00 00</span>
+                Téléphone / WhatsApp :{" "}
+                <a
+                  className="text-secondary-fixed hover:underline"
+                  href="tel:+243803615543"
+                >
+                  +243 803 615 543
+                </a>
               </p>
             </div>
           </div>
