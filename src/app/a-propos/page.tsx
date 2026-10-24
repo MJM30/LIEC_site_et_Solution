@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -58,6 +60,77 @@ export default function AProposPage() {
     },
   ];
 
+  const liecPartners = [
+    {
+      name: "Yimmiline",
+      category: "Pré-financement",
+      icon: "account_balance_wallet",
+      description:
+        "Partenaire officiel dédié aux solutions de pré-financement et à la sécurisation des garanties financières étudiantes (AVI).",
+    },
+    {
+      name: "France PREPA",
+      category: "Formation",
+      icon: "school",
+      description:
+        "Dispositif d’excellence pour la préparation méthodologique, académique et la réussite des entretiens d’admission.",
+    },
+    {
+      name: "SCI DANIVA",
+      category: "Logement",
+      icon: "apartment",
+      description:
+        "Solutions d’hébergement étudiant et accompagnement pour l’obtention des attestations de logement en France.",
+    },
+  ];
+
+  const partnerSchools = [
+    {
+      number: "01",
+      name: "ISCOM",
+      logo: "/logo_ISCOM.png",
+      fields: "Communication, publicité, marketing et événementiel.",
+    },
+    {
+      number: "02",
+      name: "MyDigitalSchool",
+      logo: "/logo_My_Digital_School.png",
+      fields: "Développement web, création numérique, webmarketing et UX/UI design.",
+    },
+    {
+      number: "03",
+      name: "École Internationale Tunon",
+      logo: "/logo_TUNON.png",
+      fields: "Tourisme, hôtellerie, relations publiques et événementiel.",
+    },
+    {
+      number: "04",
+      name: "IHECF",
+      logo: "/logo_IHECF.png",
+      fields: "Comptabilité, expertise comptable, finance et contrôle de gestion.",
+    },
+    {
+      number: "05",
+      name: "Ipac Bachelor Factory",
+      logo: "/logo_Ipac.png",
+      fields: "Commerce, gestion, finance, communication et logistique.",
+    },
+    {
+      number: "06",
+      name: "MBway",
+      logo: "/MBway.png",
+      fields:
+        "Management, entrepreneuriat, ressources humaines, finance et commerce international.",
+    },
+    {
+      number: "07",
+      name: "ESMES Business School",
+      logo: "/logo_ESMES_Business_School.png",
+      fields:
+        "Management, commerce, stratégie d’entreprise et développement international.",
+    },
+  ];
+
   return (
     <>
       <Header />
@@ -101,10 +174,10 @@ export default function AProposPage() {
                     </Link>
                     <a
                       className="inline-flex items-center justify-center px-6 py-4 rounded-xl bg-surface-container text-primary font-label-lg text-label-lg font-semibold hover:bg-surface-container-high hover:-translate-y-0.5 transition-all duration-200"
-                      href="#liec-france-prepa"
+                      href="#partenaires"
                     >
-                      <span className="material-symbols-outlined mr-2 text-xl">workspace_premium</span>
-                      Programme PREPA
+                      <span className="material-symbols-outlined mr-2 text-xl">handshake</span>
+                      Nos partenaires &amp; écoles
                     </a>
                   </div>
                 </div>
@@ -144,8 +217,120 @@ export default function AProposPage() {
             </div>
           </section>
 
-          {/* SECTION 2 : DOUBLE PRÉSENCE LYON & KINSHASA */}
-          <section className="w-full bg-surface-container-low py-space-xl lg:py-24">
+          {/* SECTION 2 : PARTENAIRES LIEC & ÉCOLES PARTENAIRES */}
+          <section id="partenaires" className="w-full bg-surface-container-low py-space-xl lg:py-24">
+            <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin flex flex-col gap-16">
+              {/* Partie 1 : Partenaires Stratégiques LIEC */}
+              <div>
+                <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-xl">
+                  <span className="font-label-md uppercase tracking-wider text-secondary font-bold mb-space-xs">
+                    Réseau &amp; Écosystème
+                  </span>
+                  <h2 className="font-headline-xl text-headline-xl text-primary font-bold">
+                    Partenaires LIEC
+                  </h2>
+                  <p className="font-body-lg text-on-surface-variant mt-space-xs">
+                    Un réseau de partenaires stratégiques pour sécuriser le pré-financement, la formation préparatoire et le logement étudiant.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                  {liecPartners.map((partner, idx) => (
+                    <div
+                      key={idx}
+                      className="group p-space-lg rounded-3xl bg-surface-container-lowest shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between border border-transparent hover:border-secondary/20"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="h-12 w-12 rounded-2xl bg-primary-container text-tertiary-fixed flex items-center justify-center shadow-sm">
+                            <span className="material-symbols-outlined text-2xl">
+                              {partner.icon}
+                            </span>
+                          </div>
+                          <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm font-bold uppercase tracking-wider">
+                            {partner.category}
+                          </span>
+                        </div>
+                        <h3 className="font-headline-md text-primary font-extrabold mb-2">
+                          {partner.name}{" "}
+                          <span className="text-secondary font-semibold text-base">
+                            ({partner.category})
+                          </span>
+                        </h3>
+                        <p className="font-body-md text-on-surface-variant leading-relaxed">
+                          {partner.description}
+                        </p>
+                      </div>
+                      <div className="mt-5 pt-3 border-t border-surface-container-high flex items-center gap-1.5 text-xs font-bold text-primary">
+                        <span className="material-symbols-outlined text-secondary text-base">
+                          verified
+                        </span>
+                        <span>Partenaire Officiel LIEC</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Partie 2 : Écoles Partenaires en France */}
+              <div>
+                <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-xl">
+                  <span className="font-label-md uppercase tracking-wider text-secondary font-bold mb-space-xs">
+                    Enseignement Supérieur Français
+                  </span>
+                  <h2 className="font-headline-xl text-headline-xl text-primary font-bold">
+                    Écoles Partenaires
+                  </h2>
+                  <p className="font-body-lg text-on-surface-variant mt-space-xs">
+                    Des grandes écoles et établissements reconnus en France offrant des cursus d’excellence adaptés aux ambitions de nos étudiants.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+                  {partnerSchools.map((school) => (
+                    <div
+                      key={school.number}
+                      className="group p-6 rounded-3xl bg-surface-container-lowest shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-surface-container-high flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Zone Logo de l'école */}
+                        <div className="h-32 w-full rounded-2xl bg-white p-4 mb-5 flex items-center justify-center border border-surface-container shadow-inner">
+                          <img
+                            src={school.logo}
+                            alt={`Logo ${school.name}`}
+                            className="max-h-24 max-w-full w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-xs font-black text-secondary bg-secondary/10 px-2 py-0.5 rounded-md">
+                            {school.number}
+                          </span>
+                          <h3 className="font-headline-sm text-primary font-extrabold leading-snug">
+                            {school.name}
+                          </h3>
+                        </div>
+
+                        <p className="font-body-sm text-on-surface-variant leading-relaxed mt-2">
+                          {school.fields}
+                        </p>
+                      </div>
+
+                      <div className="mt-5 pt-3 border-t border-surface-container flex items-center justify-between text-xs font-bold text-secondary">
+                        <span>École partenaire</span>
+                        <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
+                          school
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* SECTION 3 : DOUBLE PRÉSENCE LYON & KINSHASA */}
+          <section className="w-full bg-surface py-space-xl lg:py-24">
             <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
               <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-xl">
                 <span className="font-label-md uppercase tracking-wider text-secondary font-bold mb-space-xs">
@@ -161,7 +346,7 @@ export default function AProposPage() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
                 {/* Kinshasa Card */}
-                <div className="rounded-3xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                <div className="rounded-3xl bg-surface-container-low p-space-lg shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
                   <div>
                     <div className="relative h-60 w-full rounded-2xl overflow-hidden mb-space-md">
                       <img
@@ -180,14 +365,14 @@ export default function AProposPage() {
                       Point de rencontre privilégié pour les étudiants et leurs parents. Nous y réalisons les bilans d’orientation, la constitution des dossiers académiques, les cours LIEC-France PREPA et les simulations d’entretiens Campus France.
                     </p>
                   </div>
-                  <div className="pt-3 border-t border-surface-container flex items-center gap-2 text-secondary font-label-md font-bold">
+                  <div className="pt-3 border-t border-surface-container-high flex items-center gap-2 text-secondary font-label-md font-bold">
                     <span className="material-symbols-outlined text-lg">check_circle</span>
                     <span>Rendez-vous physiques &amp; suivi personnalisé des parents</span>
                   </div>
                 </div>
 
                 {/* Lyon Card */}
-                <div className="rounded-3xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                <div className="rounded-3xl bg-surface-container-low p-space-lg shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
                   <div>
                     <div className="relative h-60 w-full rounded-2xl overflow-hidden mb-space-md">
                       <img
@@ -206,7 +391,7 @@ export default function AProposPage() {
                       Au cœur du 2e pôle universitaire français, notre équipe lyonnaise assure la veille sur les formations, facilite la recherche de logement étudiant et accompagne les démarches administratives dès l’arrivée sur le territoire français.
                     </p>
                   </div>
-                  <div className="pt-3 border-t border-surface-container flex items-center gap-2 text-secondary font-label-md font-bold">
+                  <div className="pt-3 border-t border-surface-container-high flex items-center gap-2 text-secondary font-label-md font-bold">
                     <span className="material-symbols-outlined text-lg">check_circle</span>
                     <span>Ancrage direct dans l’écosystème universitaire français</span>
                   </div>
@@ -215,10 +400,10 @@ export default function AProposPage() {
             </div>
           </section>
 
-          {/* SECTION 3 : LE PROGRAMME LIEC-FRANCE PREPA */}
+          {/* SECTION 4 : LE PROGRAMME LIEC-FRANCE PREPA */}
           <PrepaSection />
 
-          {/* SECTION 4 : NOS 4 PILIERS DÉONTOLOGIQUES */}
+          {/* SECTION 5 : NOS 4 PILIERS DÉONTOLOGIQUES */}
           <section className="w-full bg-surface py-space-xl lg:py-24">
             <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
               <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-xl">
@@ -260,7 +445,7 @@ export default function AProposPage() {
             </div>
           </section>
 
-          {/* SECTION 5 : CAPITAL HUMAIN */}
+          {/* SECTION 6 : CAPITAL HUMAIN */}
           <section className="w-full bg-surface-container-low py-space-xl lg:py-24">
             <div className="max-w-7xl mx-auto px-margin-mobile lg:px-margin">
               <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-space-xl">
@@ -310,7 +495,7 @@ export default function AProposPage() {
             </div>
           </section>
 
-          {/* SECTION 6 : APPEL À L'ACTION FINAL */}
+          {/* SECTION 7 : APPEL À L'ACTION FINAL */}
           <CtaBannerSection />
         </div>
       </main>
