@@ -54,8 +54,7 @@ export default function AProposPage() {
       name: "Mentorat LIEC-France PREPA",
       role: "Pédagogie & Méthodologie Universitaire",
       bio: "Nos formateurs et mentors accompagnent la cohorte PREPA sur l'expression écrite, l'éloquence, la méthodologie de la dissertation et l'autonomie de recherche.",
-      image:
-        "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=900&q=80",
+      image: "/img_03.png",
       badge: "Corps Pédagogique",
     },
   ];
