@@ -47,7 +47,7 @@ export default function AProposPage() {
       name: "Coordination & Relations Familles",
       role: "Bureau d'Accompagnement — Kinshasa",
       bio: "Basée à Kinshasa, notre équipe assure le diagnostic initial, le suivi documentaire quotidien, la préparation aux entretiens Campus France et l'information transparente des parents.",
-      image: "/img_02.jpeg",
+      image: "/img_04.png",
       badge: "Bureau Kinshasa • RDC",
     },
     {
