@@ -7,10 +7,62 @@ import Footer from "@/components/Footer";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [mailtoUrl, setMailtoUrl] = useState("");
+  const [whatsappUrl, setWhatsappUrl] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    whatsapp: "",
+    email: "",
+    studyLevel: "",
+    field: "",
+    message: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+
+    const subject = encodeURIComponent(`[LIEC] Demande de 1er entretien d'orientation - ${formData.fullName}`);
+    const body = encodeURIComponent(
+      `Bonjour l'équipe LIEC,\n\nJe souhaite solliciter un premier entretien d'orientation :\n\n` +
+      `• Nom & Prénom : ${formData.fullName}\n` +
+      `• Numéro WhatsApp : ${formData.whatsapp}\n` +
+      `• Adresse Email : ${formData.email}\n` +
+      `• Niveau d'études visé : ${formData.studyLevel || "Non renseigné"}\n` +
+      `• Domaine souhaité : ${formData.field || "Non renseigné"}\n` +
+      `• Précisions / Message :\n${formData.message || "Aucune précision particulière."}\n\n` +
+      `Merci de me recontacter sous 24h.\n${formData.fullName}`
+    );
+    const generatedMailto = `mailto:contacts@liecconsulting.com?subject=${subject}&body=${body}`;
+    setMailtoUrl(generatedMailto);
+
+    const waText = encodeURIComponent(
+      `Bonjour LIEC, je viens d'envoyer une demande de 1er entretien d'orientation.\n` +
+      `Nom : ${formData.fullName}\nWhatsApp : ${formData.whatsapp}\nEmail : ${formData.email}\nNiveau : ${formData.studyLevel}\nDomaine : ${formData.field}`
+    );
+    setWhatsappUrl(`https://wa.me/243803615543?text=${waText}`);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await res.json();
+      setSubmitted(true);
+
+      // Si pas de SMTP configuré sur le serveur, on déclenche le client email automatiquement
+      if (result?.method === "fallback") {
+        window.location.href = generatedMailto;
+      }
+    } catch {
+      setSubmitted(true);
+      window.location.href = generatedMailto;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const neuCard =
@@ -181,20 +233,57 @@ export default function ContactPage() {
                   </div>
 
                   {submitted ? (
-                    <div className="p-8 rounded-3xl bg-[#eef2fc] shadow-[inset_6px_6px_12px_#cbd5ea,inset_-6px_-6px_12px_#ffffff] text-center flex flex-col items-center gap-3">
-                      <span className="material-symbols-outlined text-5xl text-secondary">
-                        verified
-                      </span>
+                    <div className="p-8 rounded-3xl bg-[#eef2fc] shadow-[inset_6px_6px_12px_#cbd5ea,inset_-6px_-6px_12px_#ffffff] text-center flex flex-col items-center gap-4">
+                      <div className="h-16 w-16 rounded-full bg-secondary/15 text-secondary flex items-center justify-center">
+                        <span className="material-symbols-outlined text-4xl">
+                          verified
+                        </span>
+                      </div>
                       <h3 className="font-headline-md text-primary font-bold">
-                        Ta demande d’entretien a bien été envoyée !
+                        Ta demande d’entretien est enregistrée !
                       </h3>
-                      <p className="font-body-md text-on-surface-variant max-w-md">
-                        Un conseiller académique LIEC te contactera sous 24h par WhatsApp ou par email.
+                      <p className="font-body-md text-on-surface-variant max-w-md leading-relaxed">
+                        Destinataire officiel : <a href="mailto:contacts@liecconsulting.com" className="text-primary font-bold underline">contacts@liecconsulting.com</a>.
+                        Un conseiller académique LIEC te contactera sous 24h par email ou WhatsApp.
                       </p>
+
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full pt-2">
+                        {mailtoUrl && (
+                          <a
+                            href={mailtoUrl}
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-primary text-surface font-label-md font-bold shadow-[4px_4px_10px_#b8c4dd,-4px_-4px_10px_#ffffff] hover:opacity-90 transition-all text-xs"
+                          >
+                            <span className="material-symbols-outlined text-base">mail</span>
+                            Ouvrir mon email vers contacts@liecconsulting.com
+                          </a>
+                        )}
+                        {whatsappUrl && (
+                          <a
+                            href={whatsappUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-secondary text-surface font-label-md font-bold shadow-[4px_4px_10px_#b8c4dd,-4px_-4px_10px_#ffffff] hover:bg-primary transition-all text-xs"
+                          >
+                            <span className="material-symbols-outlined text-base">chat</span>
+                            Notifier par WhatsApp (+243 803 615 543)
+                          </a>
+                        )}
+                      </div>
+
                       <button
                         type="button"
-                        onClick={() => setSubmitted(false)}
-                        className="mt-3 px-8 py-3.5 rounded-full bg-secondary text-surface font-label-md font-bold shadow-[6px_6px_14px_#b8c4dd,-6px_-6px_14px_#ffffff] hover:bg-primary transition-all"
+                        onClick={() => {
+                          setSubmitted(false);
+                          setFormData({
+                            fullName: "",
+                            whatsapp: "",
+                            email: "",
+                            studyLevel: "",
+                            field: "",
+                            message: "",
+                          });
+                        }}
+                        className="mt-2 text-xs font-semibold text-on-surface-variant hover:text-primary transition-colors underline"
                       >
                         Envoyer une nouvelle demande
                       </button>
@@ -208,6 +297,9 @@ export default function ContactPage() {
                         <input
                           type="text"
                           required
+                          name="fullName"
+                          value={formData.fullName}
+                          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                           placeholder="Nom & Prénom complet *"
                           className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
                         />
@@ -220,6 +312,9 @@ export default function ContactPage() {
                         <input
                           type="tel"
                           required
+                          name="whatsapp"
+                          value={formData.whatsapp}
+                          onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
                           placeholder="Numéro WhatsApp (ex: +243... ou +33...) *"
                           className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
                         />
@@ -232,6 +327,9 @@ export default function ContactPage() {
                         <input
                           type="email"
                           required
+                          name="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           placeholder="Adresse Email *"
                           className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
                         />
@@ -243,6 +341,9 @@ export default function ContactPage() {
                         </span>
                         <select
                           required
+                          name="studyLevel"
+                          value={formData.studyLevel}
+                          onChange={(e) => setFormData({ ...formData, studyLevel: e.target.value })}
                           className="w-full bg-transparent border-none focus:outline-none text-on-surface font-body-md"
                         >
                           <option value="">Niveau d’études visé en France *</option>
@@ -260,6 +361,9 @@ export default function ContactPage() {
                         <input
                           type="text"
                           required
+                          name="field"
+                          value={formData.field}
+                          onChange={(e) => setFormData({ ...formData, field: e.target.value })}
                           placeholder="Domaine souhaité (ex: Développement Web, Management...) *"
                           className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
                         />
@@ -271,6 +375,9 @@ export default function ContactPage() {
                         </span>
                         <textarea
                           rows={3}
+                          name="message"
+                          value={formData.message}
+                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                           placeholder="Précisions sur ton projet ou tes questions..."
                           className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md resize-none"
                         />
@@ -279,9 +386,10 @@ export default function ContactPage() {
                       <div className="pt-2 flex flex-col items-center gap-3">
                         <button
                           type="submit"
-                          className="w-full py-4 rounded-full bg-secondary hover:bg-primary text-surface font-label-lg text-base font-bold tracking-wide shadow-[6px_6px_16px_#b8c4dd,-6px_-6px_16px_#ffffff] transition-all duration-200 cursor-pointer"
+                          disabled={loading}
+                          className="w-full py-4 rounded-full bg-secondary hover:bg-primary text-surface font-label-lg text-base font-bold tracking-wide shadow-[6px_6px_16px_#b8c4dd,-6px_-6px_16px_#ffffff] transition-all duration-200 cursor-pointer disabled:opacity-50"
                         >
-                          Envoyer ma demande d’entretien
+                          {loading ? "Envoi en cours..." : "Envoyer ma demande d’entretien"}
                         </button>
                         <p className="text-xs text-on-surface-variant text-center">
                           Tu souhaites directement remplir la fiche d’inscription PREPA ?{" "}
