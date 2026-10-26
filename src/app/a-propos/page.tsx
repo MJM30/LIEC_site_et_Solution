@@ -75,13 +75,6 @@ export default function AProposPage() {
         "Dispositif d’excellence pour la préparation méthodologique, académique et la réussite des entretiens d’admission.",
     },
     {
-      name: "My French Degree",
-      category: "",
-      icon: "workspace_premium",
-      description:
-        "Orientation et accompagnement vers les diplômes et cursus d’enseignement supérieur reconnus en France.",
-    },
-    {
       name: "DANOVA Société Civile Immobilière",
       category: "Logement",
       icon: "apartment",
@@ -146,6 +139,13 @@ export default function AProposPage() {
       logo: "/logo_ESMES_Business_School.png",
       fields:
         "Management, commerce, stratégie d’entreprise et développement international.",
+    },
+    {
+      number: "08",
+      name: "My French Degree",
+      logo: "/logo_my_french_degree.png",
+      fields:
+        "Orientation et accompagnement vers les diplômes et cursus d’enseignement supérieur reconnus en France.",
     },
   ];
 
@@ -252,7 +252,7 @@ export default function AProposPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
                   {liecPartners.map((partner, idx) => (
                     <div
                       key={idx}
