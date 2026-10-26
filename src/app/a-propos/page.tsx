@@ -88,6 +88,18 @@ export default function AProposPage() {
       description:
         "Solutions d’hébergement étudiant et accompagnement pour l’obtention des attestations de logement en France.",
     },
+    {
+      name: "AéroQualis",
+      category: "Voyage & Aviation",
+      icon: "flight_takeoff",
+      logo: "/logo_aeroqualis.png",
+      description:
+        "Vente de billets & services de voyage, transport Ville ↔ Aéroport, assistance documentaire & démarches aéronautiques, manuels, procédures & conseil aux compagnies aériennes, location et affrètement d'aéronefs.",
+      contacts: [
+        { label: "+243 990 207 891", tel: "+243990207891" },
+        { label: "+243 896 652 496", tel: "+243896652496" },
+      ],
+    },
   ];
 
   const partnerSchools = [
@@ -240,7 +252,7 @@ export default function AProposPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
                   {liecPartners.map((partner, idx) => (
                     <div
                       key={idx}
@@ -248,11 +260,21 @@ export default function AProposPage() {
                     >
                       <div>
                         <div className="flex items-center justify-between mb-4">
-                          <div className="h-12 w-12 rounded-2xl bg-primary-container text-tertiary-fixed flex items-center justify-center shadow-sm">
-                            <span className="material-symbols-outlined text-2xl">
-                              {partner.icon}
-                            </span>
-                          </div>
+                          {partner.logo ? (
+                            <div className="h-12 w-12 rounded-2xl bg-white border border-surface-container shadow-sm p-1 flex items-center justify-center overflow-hidden">
+                              <img
+                                src={partner.logo}
+                                alt={`Logo ${partner.name}`}
+                                className="h-full w-full object-contain"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-12 w-12 rounded-2xl bg-primary-container text-tertiary-fixed flex items-center justify-center shadow-sm">
+                              <span className="material-symbols-outlined text-2xl">
+                                {partner.icon}
+                              </span>
+                            </div>
+                          )}
                           {partner.category && (
                             <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm font-bold uppercase tracking-wider">
                               {partner.category}
@@ -270,6 +292,30 @@ export default function AProposPage() {
                         <p className="font-body-md text-on-surface-variant leading-relaxed">
                           {partner.description}
                         </p>
+                        {partner.contacts && partner.contacts.length > 0 && (
+                          <div className="mt-4 pt-3 border-t border-surface-container-high/60">
+                            <span className="text-xs font-bold text-primary flex items-center gap-1 mb-1.5">
+                              <span className="material-symbols-outlined text-sm text-secondary">
+                                contact_phone
+                              </span>
+                              Contact &amp; réservations :
+                            </span>
+                            <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                              {partner.contacts.map((c, cIdx) => (
+                                <a
+                                  key={cIdx}
+                                  href={`tel:${c.tel}`}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container hover:bg-secondary/10 hover:text-secondary text-primary transition-colors"
+                                >
+                                  <span className="material-symbols-outlined text-xs">
+                                    call
+                                  </span>
+                                  {c.label}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="mt-5 pt-3 border-t border-surface-container-high flex items-center gap-1.5 text-xs font-bold text-primary">
                         <span className="material-symbols-outlined text-secondary text-base">
