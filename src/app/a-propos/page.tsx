@@ -93,6 +93,17 @@ export default function AProposPage() {
         { label: "+243 896 652 496", tel: "+243896652496" },
       ],
     },
+    {
+      name: "Royal Services",
+      category: "Voyage & Mobilité",
+      icon: "travel_explore",
+      logo: "/logo_royal_services.png",
+      description:
+        "Assistance voyage, demande de rendez-vous, réservation de billets et hôtels, classement et suivi de dossiers, orientation pour études à l’étranger.",
+      contacts: [
+        { label: "+243 821 340 580", tel: "+243821340580" },
+      ],
+    },
   ];
 
   const partnerSchools = [
@@ -252,7 +263,7 @@ export default function AProposPage() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
                   {liecPartners.map((partner, idx) => (
                     <div
                       key={idx}
