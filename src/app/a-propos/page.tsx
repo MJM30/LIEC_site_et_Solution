@@ -156,7 +156,7 @@ export default function AProposPage() {
       name: "My French Degree",
       logo: "/logo_my_french_degree.png",
       fields:
-        "Orientation et accompagnement vers les diplômes et cursus d’enseignement supérieur reconnus en France.",
+        "Communication and Advertising (via ISCOM)\nFinance, Accounting, and Auditing (via IHECF)\nDigital Technology, Webmarketing, and Development (via MyDigitalSchool)\nManagement, Commerce, and Human Resources (via Pigier, Ipac Bachelor Factory, and MBway)\nTourism, Luxury, and Event Management (via École Internationale Tunon)",
     },
   ];
 
@@ -378,9 +378,20 @@ export default function AProposPage() {
                           </h3>
                         </div>
 
-                        <p className="font-body-sm text-on-surface-variant leading-relaxed mt-2">
-                          {school.fields}
-                        </p>
+                        {school.fields.includes("\n") ? (
+                          <ul className="mt-2 space-y-1.5 text-xs text-on-surface-variant leading-relaxed">
+                            {school.fields.split("\n").map((line, lIdx) => (
+                              <li key={lIdx} className="flex items-start gap-1.5">
+                                <span className="text-secondary font-bold text-sm leading-none mt-0.5">•</span>
+                                <span>{line}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="font-body-sm text-on-surface-variant leading-relaxed mt-2">
+                            {school.fields}
+                          </p>
+                        )}
                       </div>
 
                       <div className="mt-5 pt-3 border-t border-surface-container flex items-center justify-between text-xs font-bold text-secondary">
