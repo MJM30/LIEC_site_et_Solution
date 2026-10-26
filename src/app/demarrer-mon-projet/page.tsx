@@ -5,11 +5,29 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+// Limite le nombre de chiffres (digits) saisis à 14 au maximum
+function limitDigits(val: string, maxDigits = 14) {
+  let count = 0;
+  let result = "";
+  for (const char of val) {
+    if (/\d/.test(char)) {
+      if (count < maxDigits) {
+        count++;
+        result += char;
+      }
+    } else {
+      result += char;
+    }
+  }
+  return result;
+}
+
 export default function DemarrerMonProjetPage() {
   const [submitted, setSubmitted] = useState(false);
   const [derniereAnneeUniv, setDerniereAnneeUniv] = useState("");
   const [autreUnivText, setAutreUnivText] = useState("");
   const [passeportValide, setPasseportValide] = useState("");
+  const [tuteurContact, setTuteurContact] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,6 +73,7 @@ export default function DemarrerMonProjetPage() {
                     setDerniereAnneeUniv("");
                     setAutreUnivText("");
                     setPasseportValide("");
+                    setTuteurContact("");
                   }}
                   className="px-8 py-4 rounded-full bg-secondary text-surface font-label-lg font-bold shadow-[6px_6px_14px_#b8c4dd,-6px_-6px_14px_#ffffff] hover:bg-primary transition-all"
                 >
@@ -272,8 +291,11 @@ export default function DemarrerMonProjetPage() {
 
                 {/* 7. Contacts du tuteur ou parent */}
                 <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary">
-                    7. Contacts du tuteur ou parent
+                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary flex items-center justify-between">
+                    <span>7. Contacts du tuteur ou parent</span>
+                    <span className="text-[11px] font-normal text-on-surface-variant">
+                      (max 14 chiffres)
+                    </span>
                   </label>
                   <div className={neuInputWrapper}>
                     <span className="material-symbols-outlined text-secondary text-xl">
@@ -281,7 +303,11 @@ export default function DemarrerMonProjetPage() {
                     </span>
                     <input
                       type="text"
-                      placeholder="Téléphone / Email du parent ou tuteur"
+                      name="tuteurContact"
+                      value={tuteurContact}
+                      onChange={(e) => setTuteurContact(limitDigits(e.target.value, 14))}
+                      maxLength={20}
+                      placeholder="Numéro de téléphone du parent ou tuteur (max 14 chiffres)"
                       className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
                     />
                   </div>

@@ -5,6 +5,23 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+// Limite le nombre de chiffres (digits) saisis à 14 au maximum
+function limitDigits(val: string, maxDigits = 14) {
+  let count = 0;
+  let result = "";
+  for (const char of val) {
+    if (/\d/.test(char)) {
+      if (count < maxDigits) {
+        count++;
+        result += char;
+      }
+    } else {
+      result += char;
+    }
+  }
+  return result;
+}
+
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -314,8 +331,14 @@ export default function ContactPage() {
                           required
                           name="whatsapp"
                           value={formData.whatsapp}
-                          onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                          placeholder="Numéro WhatsApp (ex: +243... ou +33...) *"
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              whatsapp: limitDigits(e.target.value, 14),
+                            })
+                          }
+                          maxLength={20}
+                          placeholder="Numéro de téléphone / WhatsApp (max 14 chiffres) *"
                           className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
                         />
                       </div>
