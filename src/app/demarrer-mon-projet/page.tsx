@@ -5,93 +5,236 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// Limite le nombre de chiffres (digits) saisis à 14 au maximum
-function limitDigits(val: string, maxDigits = 14) {
-  let count = 0;
-  let result = "";
-  for (const char of val) {
-    if (/\d/.test(char)) {
-      if (count < maxDigits) {
-        count++;
-        result += char;
-      }
-    } else {
-      result += char;
-    }
-  }
-  return result;
-}
-
 export default function DemarrerMonProjetPage() {
-  const [submitted, setSubmitted] = useState(false);
-  const [derniereAnneeUniv, setDerniereAnneeUniv] = useState("");
-  const [autreUnivText, setAutreUnivText] = useState("");
-  const [passeportValide, setPasseportValide] = useState("");
-  const [tuteurContact, setTuteurContact] = useState("");
+  // 1. Informations du Candidat
+  const [nomComplet, setNomComplet] = useState("");
+  const [email, setEmail] = useState("");
+  const [telephone, setTelephone] = useState("+243 ");
+  const [paysRecrutement, setPaysRecrutement] = useState("🇨🇩 RDC (Kinshasa / Lubumbashi / Goma)");
+  const [villeOrigine, setVilleOrigine] = useState("Kinshasa");
+  const [destination] = useState("Lyon (Exclusivement)");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // 2. Informations du Parent & Famille
+  const [nomParent, setNomParent] = useState("");
+  const [telephoneParent, setTelephoneParent] = useState("+243 ");
+
+  // 3. Parcours Académique & Activité
+  const [anneeDiplome, setAnneeDiplome] = useState("2024");
+  const [activiteActuelle, setActiviteActuelle] = useState("Étudiant / Stagiaire");
+  const [derniereAnneeUniv, setDerniereAnneeUniv] = useState("2024");
+
+  // 4. École Partenaire & Budget
+  const [ecolePartenaire, setEcolePartenaire] = useState(
+    "2. MyDigitalSchool Lyon (Web dev, digital & UX/UI)"
+  );
+  const [budgetAnnuel, setBudgetAnnuel] = useState("8 500 € – 10 000 € / an");
+
+  // Submission States
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [candidateRef, setCandidateRef] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setLoading(true);
+    setErrorMsg(null);
+
+    const payload = {
+      full_name: nomComplet.trim(),
+      email: email.trim(),
+      phone: telephone.trim(),
+      country: paysRecrutement,
+      ville_origine: villeOrigine.trim(),
+      destination,
+      parent_name: nomParent.trim(),
+      parent_phone: telephoneParent.trim(),
+      annee_diplome: anneeDiplome.trim(),
+      activite_actuelle: activiteActuelle.trim(),
+      derniere_annee_univ: derniereAnneeUniv.trim(),
+      program: ecolePartenaire,
+      budget_annuel: budgetAnnuel,
+      source: "LIEC - France Prépa ENROLLMENT FORM • 2027-2028",
+    };
+
+    try {
+      // 1. Try forwarding via internal API
+      let res = await fetch("/api/prepa-enrollment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      // 2. Direct fallback to LIEC-ONE dashboard API (port 3001) if internal gateway returns an error
+      if (!res.ok) {
+        try {
+          const directRes = await fetch("http://localhost:3001/api/candidats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (directRes.ok) {
+            res = directRes;
+          }
+        } catch {}
+      }
+
+      const data = await res.json();
+
+      if (res.ok && (data.ok || data.success)) {
+        setCandidateRef(data.ref || "#CAN-2025-NEW");
+        setSubmitted(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setErrorMsg(
+          data.error ||
+            "Une erreur est survenue lors de l'enregistrement de votre candidature. Veuillez réessayer."
+        );
+      }
+    } catch (err: any) {
+      // In case of network interruption, attempt direct client POST to dashboard
+      try {
+        const directRes = await fetch("http://localhost:3001/api/candidats", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const directData = await directRes.json();
+        if (directRes.ok && directData.ok) {
+          setCandidateRef(directData.ref || "#CAN-2025-NEW");
+          setSubmitted(true);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+      } catch {}
+
+      setErrorMsg(
+        "Impossible de joindre le serveur. Assurez-vous que le dashboard LIEC-ONE est accessible."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Classes Neumorphism adaptées à la charte graphique LIEC (#eef2fc / #002452 / #006a61 / #ffdf9e)
+  // Neumorphism styling tokens
   const neuCard =
-    "bg-[#eef2fc] rounded-[42px] shadow-[16px_16px_32px_#cad4e8,-16px_-16px_32px_#ffffff] border border-white/60";
+    "bg-[#eef2fc] rounded-[36px] shadow-[16px_16px_32px_#cad4e8,-16px_-16px_32px_#ffffff] border border-white/70";
+  const neuSectionBox =
+    "p-6 rounded-3xl bg-[#eef2fc] shadow-[8px_8px_18px_#cbd5ea,-8px_-8px_18px_#ffffff] border border-white/50 space-y-4";
   const neuInputWrapper =
-    "flex items-center gap-3 px-6 py-4 rounded-full bg-[#eef2fc] shadow-[inset_6px_6px_12px_#cbd5ea,inset_-6px_-6px_12px_#ffffff] focus-within:ring-2 focus-within:ring-secondary/40 transition-all";
+    "flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-[#eef2fc] shadow-[inset_5px_5px_10px_#cbd5ea,inset_-5px_-5px_10px_#ffffff] focus-within:ring-2 focus-within:ring-secondary/40 transition-all";
   const neuRadioDefault =
-    "flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#eef2fc] shadow-[6px_6px_12px_#cbd5ea,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#cbd5ea,inset_-4px_-4px_8px_#ffffff] text-on-surface cursor-pointer transition-all";
+    "flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#eef2fc] shadow-[4px_4px_10px_#cbd5ea,-4px_-4px_10px_#ffffff] hover:shadow-[inset_3px_3px_6px_#cbd5ea,inset_-3px_-3px_6px_#ffffff] text-on-surface cursor-pointer transition-all";
   const neuRadioSelected =
-    "flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#eef2fc] shadow-[inset_6px_6px_12px_#cbd5ea,inset_-6px_-6px_12px_#ffffff] ring-2 ring-secondary text-primary font-bold cursor-pointer transition-all";
+    "flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#eef2fc] shadow-[inset_4px_4px_8px_#cbd5ea,inset_-4px_-4px_8px_#ffffff] ring-2 ring-secondary text-primary font-bold cursor-pointer transition-all";
+
+  const partnerSchools = [
+    {
+      id: "mds",
+      title: "2. MyDigitalSchool Lyon (Web dev, digital & UX/UI)",
+      desc: "Bachelor Web & UX/UI Design • MBA Direction Artistique & Webmarketing",
+    },
+    {
+      id: "iscom",
+      title: "1. ISCOM Lyon (Communication, marketing & événementiel)",
+      desc: "Programme Grande École • Stratégie de marque & Relations Publiques",
+    },
+    {
+      id: "ihecf",
+      title: "3. IHECF Lyon (Comptabilité, finance & audit)",
+      desc: "DCG / Bachelor Finance • DSCG / MBA Contrôle de gestion & Audit",
+    },
+    {
+      id: "ipac",
+      title: "4. Ipac Bachelor Factory Lyon (Commerce, management & RH)",
+      desc: "Bachelor Business & Négociation • Logistique & Ressources Humaines",
+    },
+    {
+      id: "mbway",
+      title: "5. MBway Lyon (Management & business school)",
+      desc: "MBA Management & Commerce International • Entrepreneuriat",
+    },
+    {
+      id: "tunon",
+      title: "6. École Internationale Tunon Lyon (Tourisme & hospitalité)",
+      desc: "Bachelor Hôtellerie & Luxe • Événementiel & Relations Publiques",
+    },
+  ];
 
   return (
     <>
       <Header />
-      <main className="w-full pt-24 pb-20 bg-[#eef2fc] min-h-screen flex flex-col items-center justify-center px-4 sm:px-6">
-        <div className="w-full max-w-2xl my-8">
+      <main className="w-full pt-28 pb-20 bg-[#eef2fc] min-h-screen flex flex-col items-center justify-center px-4 sm:px-6">
+        <div className="w-full max-w-3xl my-6">
           {submitted ? (
-            <div className={`${neuCard} p-8 sm:p-12 text-center flex flex-col items-center gap-5`}>
+            <div className={`${neuCard} p-8 sm:p-12 text-center flex flex-col items-center gap-5 animate-fadeIn`}>
               <div className="h-24 w-24 rounded-full bg-[#eef2fc] shadow-[8px_8px_16px_#cad4e8,-8px_-8px_16px_#ffffff] flex items-center justify-center text-secondary">
                 <span className="material-symbols-outlined text-5xl">verified</span>
               </div>
-              <h2 className="font-headline-lg text-primary font-extrabold">
-                Inscription enregistrée avec succès !
+
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#d8f6ea] text-[#0c685a] font-extrabold text-xs tracking-wider uppercase">
+                <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                Connecté en direct au Dashboard LIEC-ONE
+              </div>
+
+              <h2 className="font-headline-lg text-primary font-extrabold text-2xl sm:text-3xl">
+                Candidature enregistrée avec succès !
               </h2>
-              <p className="font-body-md text-on-surface-variant max-w-md leading-relaxed">
-                Merci d’avoir complété le{" "}
-                <strong className="text-primary">
-                  LIEC - France Prépa ENROLLMENT FORM (2027-2028)
-                </strong>
-                . Nos conseillers de Lyon et Kinshasa te contacteront très rapidement.
+
+              {candidateRef && (
+                <div className="px-5 py-2.5 rounded-2xl bg-white shadow-sm border border-slate-200 inline-flex items-center gap-3">
+                  <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">
+                    Numéro de dossier Candidat :
+                  </span>
+                  <span className="font-mono text-base font-extrabold text-[#0c685a]">
+                    {candidateRef}
+                  </span>
+                </div>
+              )}
+
+              <p className="font-body-md text-on-surface-variant max-w-lg leading-relaxed text-sm sm:text-base">
+                Félicitations <strong className="text-primary">{nomComplet}</strong> ! Tes informations pour le programme{" "}
+                <strong className="text-primary">LIEC - France Prépa (2027-2028)</strong> ont été transmises instantanément dans le dashboard officiel de nos conseillers pédagogiques à Lyon et Kinshasa.
               </p>
+
+              <div className="rounded-2xl bg-[#f0faf7] border border-[#ccece2] p-4 text-left w-full max-w-md text-xs space-y-1.5 text-slate-700">
+                <div>• <strong>Candidat :</strong> {nomComplet} ({email})</div>
+                <div>• <strong>Téléphone / WhatsApp :</strong> {telephone}</div>
+                <div>• <strong>Origine & Recrutement :</strong> {villeOrigine} ({paysRecrutement})</div>
+                <div>• <strong>École Partenaire :</strong> {ecolePartenaire}</div>
+                <div>• <strong>Budget garanti :</strong> {budgetAnnuel}</div>
+                <div>• <strong>Parent référent :</strong> {nomParent || "Non renseigné"} ({telephoneParent})</div>
+              </div>
+
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4 w-full">
                 <button
                   type="button"
                   onClick={() => {
                     setSubmitted(false);
-                    setDerniereAnneeUniv("");
-                    setAutreUnivText("");
-                    setPasseportValide("");
-                    setTuteurContact("");
+                    setNomComplet("");
+                    setEmail("");
+                    setTelephone("+243 ");
+                    setNomParent("");
+                    setTelephoneParent("+243 ");
+                    setCandidateRef(null);
                   }}
-                  className="px-8 py-4 rounded-full bg-secondary text-surface font-label-lg font-bold shadow-[6px_6px_14px_#b8c4dd,-6px_-6px_14px_#ffffff] hover:bg-primary transition-all"
+                  className="px-8 py-3.5 rounded-full bg-secondary text-surface font-label-lg font-bold shadow-[6px_6px_14px_#b8c4dd,-6px_-6px_14px_#ffffff] hover:bg-primary transition-all cursor-pointer"
                 >
-                  Nouvelle réponse
+                  Renseigner un autre candidat
                 </button>
                 <Link
                   href="/"
-                  className="px-8 py-4 rounded-full bg-[#eef2fc] text-primary font-label-lg font-bold shadow-[6px_6px_12px_#cbd5ea,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#cbd5ea,inset_-4px_-4px_8px_#ffffff] transition-all"
+                  className="px-8 py-3.5 rounded-full bg-[#eef2fc] text-primary font-label-lg font-bold shadow-[6px_6px_12px_#cbd5ea,-6px_-6px_12px_#ffffff] hover:shadow-[inset_4px_4px_8px_#cbd5ea,inset_-4px_-4px_8px_#ffffff] transition-all"
                 >
-                  Retour à l’accueil
+                  Retour au site web
                 </Link>
               </div>
             </div>
           ) : (
-            <div className={`${neuCard} p-7 sm:p-12`}>
-              {/* Logo Circulaire Neumorphique en haut */}
+            <div className={`${neuCard} p-6 sm:p-10`}>
+              {/* Logo Circulaire Neumorphique & En-tête */}
               <div className="flex flex-col items-center text-center mb-8">
-                <div className="h-24 w-24 rounded-full bg-[#eef2fc] p-2 shadow-[8px_8px_16px_#c6d0e6,-8px_-8px_16px_#ffffff] border-4 border-white flex items-center justify-center overflow-hidden mb-5">
+                <div className="h-20 w-20 rounded-full bg-[#eef2fc] p-2 shadow-[8px_8px_16px_#c6d0e6,-8px_-8px_16px_#ffffff] border-4 border-white flex items-center justify-center overflow-hidden mb-4">
                   <img
                     src="/logo_LIEC (1).png"
                     alt="Logo LIEC"
@@ -99,275 +242,410 @@ export default function DemarrerMonProjetPage() {
                   />
                 </div>
 
-                <h1 className="font-headline-lg sm:text-3xl text-primary font-extrabold tracking-tight">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#d8f6ea] text-[#0c685a] font-extrabold text-[11px] tracking-wider uppercase mb-2">
+                  <span className="h-2 w-2 rounded-full bg-[#0c685a] animate-pulse" />
+                  Synchronisation Dashboard Temps Réel
+                </div>
+
+                <h1 className="font-headline-lg text-2xl sm:text-3xl text-primary font-extrabold tracking-tight">
                   LIEC - France Prépa
                 </h1>
-                <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-secondary mt-1">
+                <p className="text-xs sm:text-sm font-extrabold uppercase tracking-[0.2em] text-secondary mt-1">
                   ENROLLMENT FORM • 2027-2028
                 </p>
-                <p className="text-xs text-on-surface-variant mt-2">
-                  Étude en France •{" "}
-                  <span className="text-error font-semibold">* Indicates required question</span>
+                <p className="text-xs text-on-surface-variant mt-2 max-w-md">
+                  Étude en France • Remplis ce formulaire officiel pour que ton dossier apparaisse directement comme candidat sur le Dashboard des conseillers.
                 </p>
               </div>
 
-              {/* Formulaire Neumorphique */}
+              {errorMsg && (
+                <div className="mb-6 rounded-2xl bg-red-50 border border-red-200 p-4 text-xs font-bold text-red-800 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-red-600">error</span>
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              {/* Formulaire Officiel Organisé en 4 Sections */}
               <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                {/* 1. Nom complet */}
-                <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary">
-                    1. Nom complet <span className="text-error">*</span>
-                  </label>
-                  <div className={neuInputWrapper}>
-                    <span className="material-symbols-outlined text-secondary text-xl">
-                      person
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Nom complet *"
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
-                    />
-                  </div>
-                </div>
 
-                {/* 2. Prénom */}
-                <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary">
-                    2. Prénom <span className="text-error">*</span>
-                  </label>
-                  <div className={neuInputWrapper}>
-                    <span className="material-symbols-outlined text-secondary text-xl">
-                      badge
+                {/* ============================================================ */}
+                {/* 1. INFORMATIONS DU CANDIDAT */}
+                {/* ============================================================ */}
+                <div className={neuSectionBox}>
+                  <div className="flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="h-6 w-6 rounded-full bg-[#002452] text-white flex items-center justify-center text-xs font-bold">
+                      1
                     </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Prénom *"
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
-                    />
+                    <h2 className="text-sm font-extrabold uppercase tracking-wider text-primary">
+                      Informations du Candidat
+                    </h2>
                   </div>
-                </div>
 
-                {/* 3. Année du bac */}
-                <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary">
-                    3. Année du bac <span className="text-error">*</span>
-                  </label>
-                  <div className={neuInputWrapper}>
-                    <span className="material-symbols-outlined text-secondary text-xl">
-                      calendar_month
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Année d'obtention du bac (ex: 2025) *"
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
-                    />
-                  </div>
-                </div>
-
-                {/* 4. Dernière année à l'université */}
-                <div className="flex flex-col gap-3 pt-1">
-                  <div className="pl-4">
-                    <label className="text-xs font-bold uppercase tracking-wider text-primary block">
-                      4. Dernière année à l&apos;université <span className="text-error">*</span>
+                  {/* Nom complet du candidat */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                      <span>Nom complet du candidat <span className="text-error">*</span></span>
+                      <span className="text-[10.5px] text-slate-400 font-normal">Ex: Cédric Ilunga</span>
                     </label>
-                    <span className="text-[11px] text-on-surface-variant">
-                      Mark only one oval (Une seule réponse possible)
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {[
-                      "Pré-universitaire, Oui",
-                      "Post-universitaire, Oui",
-                      "Pré-universitaire, Non",
-                      "Post-universitaire, Non",
-                    ].map((option) => {
-                      const active = derniereAnneeUniv === option;
-                      return (
-                        <label
-                          key={option}
-                          className={active ? neuRadioSelected : neuRadioDefault}
-                        >
-                          <input
-                            type="radio"
-                            name="derniereAnneeUniv"
-                            value={option}
-                            required
-                            checked={active}
-                            onChange={(e) => setDerniereAnneeUniv(e.target.value)}
-                            className="h-4 w-4 accent-secondary"
-                          />
-                          <span className="text-sm">{option}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-
-                  {/* Option Other */}
-                  <div className={ neuInputWrapper }>
-                    <label className="flex items-center gap-2 cursor-pointer shrink-0 text-primary font-semibold text-sm">
+                    <div className={neuInputWrapper}>
+                      <span className="material-symbols-outlined text-secondary text-xl">
+                        person
+                      </span>
                       <input
-                        type="radio"
-                        name="derniereAnneeUniv"
-                        value="Other"
+                        type="text"
                         required
-                        checked={derniereAnneeUniv === "Other"}
-                        onChange={(e) => setDerniereAnneeUniv(e.target.value)}
-                        className="h-4 w-4 accent-secondary"
+                        value={nomComplet}
+                        onChange={(e) => setNomComplet(e.target.value)}
+                        placeholder="Ex: Cédric Ilunga"
+                        className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/50 font-medium text-sm"
                       />
-                      <span>Other :</span>
+                    </div>
+                  </div>
+
+                  {/* Adresse e-mail */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                      <span>Adresse e-mail <span className="text-error">*</span></span>
+                      <span className="text-[10.5px] text-slate-400 font-normal">cedric.ilunga@gmail.com</span>
                     </label>
-                    <input
-                      type="text"
-                      placeholder="Précisez si autre..."
-                      value={autreUnivText}
-                      onFocus={() => setDerniereAnneeUniv("Other")}
-                      onChange={(e) => {
-                        setDerniereAnneeUniv("Other");
-                        setAutreUnivText(e.target.value);
-                      }}
-                      required={derniereAnneeUniv === "Other"}
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 text-sm"
-                    />
+                    <div className={neuInputWrapper}>
+                      <span className="material-symbols-outlined text-secondary text-xl">
+                        mail
+                      </span>
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="cedric.ilunga@gmail.com"
+                        className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/50 font-medium text-sm"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* 5. Activité actuelle */}
-                <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary">
-                    5. Activité actuelle <span className="text-error">*</span>
-                  </label>
-                  <div className={neuInputWrapper}>
-                    <span className="material-symbols-outlined text-secondary text-xl">
-                      work
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Activité actuelle (Étudiant, salarié...) *"
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
-                    />
-                  </div>
-                </div>
-
-                {/* 6. Titre de voyage ou passeport */}
-                <div className="flex flex-col gap-3 pt-1">
-                  <div className="pl-4">
-                    <label className="text-xs font-bold uppercase tracking-wider text-primary block">
-                      6. Titre de voyage ou passeport ayant une durée de 3 ans minimum ?{" "}
-                      <span className="text-error">*</span>
+                  {/* Téléphone / WhatsApp */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                      <span>Téléphone / WhatsApp <span className="text-error">*</span></span>
+                      <span className="text-[10.5px] text-slate-400 font-normal">3/14 chiffres max (+243...)</span>
                     </label>
-                    <span className="text-[11px] text-on-surface-variant">
-                      Mark only one oval (Une seule réponse possible)
-                    </span>
+                    <div className={neuInputWrapper}>
+                      <span className="material-symbols-outlined text-secondary text-xl">
+                        phone
+                      </span>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={18}
+                        value={telephone}
+                        onChange={(e) => setTelephone(e.target.value)}
+                        placeholder="+243 81 552 1904"
+                        className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/50 font-medium text-sm"
+                      />
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    {["Oui", "Non"].map((option) => {
-                      const active = passeportValide === option;
-                      return (
-                        <label
-                          key={option}
-                          className={active ? neuRadioSelected : neuRadioDefault}
+                  {/* Pays de recrutement & Ville d'origine */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-primary pl-1">
+                        Pays de recrutement <span className="text-error">*</span>
+                      </label>
+                      <div className={neuInputWrapper}>
+                        <span className="material-symbols-outlined text-secondary text-xl">
+                          public
+                        </span>
+                        <select
+                          value={paysRecrutement}
+                          onChange={(e) => setPaysRecrutement(e.target.value)}
+                          className="w-full bg-transparent border-none focus:outline-none text-on-surface font-medium text-xs cursor-pointer"
                         >
-                          <input
-                            type="radio"
-                            name="passeportValide"
-                            value={option}
-                            required
-                            checked={active}
-                            onChange={(e) => setPasseportValide(e.target.value)}
-                            className="h-4 w-4 accent-secondary"
-                          />
-                          <span className="text-sm">{option}</span>
-                        </label>
-                      );
-                    })}
+                          <option value="🇨🇩 RDC (Kinshasa / Lubumbashi / Goma)">
+                            🇨🇩 RDC (Kinshasa / Lubumbashi / Goma)
+                          </option>
+                          <option value="🇨🇬 Congo-Brazzaville (Brazzaville / Pointe-Noire)">
+                            🇨🇬 Congo-Brazzaville (Brazzaville / Pointe-Noire)
+                          </option>
+                          <option value="🇨🇲 Cameroun (Douala / Yaoundé)">
+                            🇨🇲 Cameroun (Douala / Yaoundé)
+                          </option>
+                          <option value="🌍 Autre pays d'Afrique centrale">
+                            🌍 Autre pays d&apos;Afrique centrale
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-primary pl-1">
+                        Ville d&apos;origine
+                      </label>
+                      <div className={neuInputWrapper}>
+                        <span className="material-symbols-outlined text-secondary text-xl">
+                          location_city
+                        </span>
+                        <input
+                          type="text"
+                          value={villeOrigine}
+                          onChange={(e) => setVilleOrigine(e.target.value)}
+                          placeholder="Kinshasa"
+                          className="w-full bg-transparent border-none focus:outline-none text-on-surface font-medium text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Destination d'études */}
+                  <div className="flex flex-col gap-1.5 pt-1">
+                    <label className="text-xs font-bold text-primary pl-1">
+                      Destination d&apos;études
+                    </label>
+                    <div className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/70 border border-slate-200 text-xs font-bold text-[#002452]">
+                      <span className="material-symbols-outlined text-secondary text-lg">
+                        flight_takeoff
+                      </span>
+                      <span>Lyon (Exclusivement)</span>
+                      <span className="ml-auto text-[10.5px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                        Campus France Lyon
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* 7. Contacts du tuteur ou parent */}
-                <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary flex items-center justify-between">
-                    <span>7. Contacts du tuteur ou parent</span>
-                    <span className="text-[11px] font-normal text-on-surface-variant">
-                      (max 14 chiffres)
+                {/* ============================================================ */}
+                {/* 2. INFORMATIONS DU PARENT & FAMILLE */}
+                {/* ============================================================ */}
+                <div className={neuSectionBox}>
+                  <div className="flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="h-6 w-6 rounded-full bg-[#006a61] text-white flex items-center justify-center text-xs font-bold">
+                      2
                     </span>
-                  </label>
-                  <div className={neuInputWrapper}>
-                    <span className="material-symbols-outlined text-secondary text-xl">
-                      family_restroom
-                    </span>
-                    <input
-                      type="text"
-                      name="tuteurContact"
-                      value={tuteurContact}
-                      onChange={(e) => setTuteurContact(limitDigits(e.target.value, 14))}
-                      maxLength={20}
-                      placeholder="Numéro de téléphone du parent ou tuteur (max 14 chiffres)"
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
-                    />
+                    <h2 className="text-sm font-extrabold uppercase tracking-wider text-primary">
+                      Informations du Parent &amp; Famille
+                    </h2>
+                  </div>
+
+                  {/* Nom complet du parent */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                      <span>Nom complet du parent</span>
+                      <span className="text-[10.5px] text-slate-400 font-normal">Ex: Jean-Pierre Kabangele</span>
+                    </label>
+                    <div className={neuInputWrapper}>
+                      <span className="material-symbols-outlined text-secondary text-xl">
+                        family_restroom
+                      </span>
+                      <input
+                        type="text"
+                        value={nomParent}
+                        onChange={(e) => setNomParent(e.target.value)}
+                        placeholder="Ex: Jean-Pierre Kabangele"
+                        className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/50 font-medium text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Téléphone du parent */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                      <span>Téléphone du parent</span>
+                      <span className="text-[10.5px] text-slate-400 font-normal">0/14 chiffres max (+243 81 900 1234)</span>
+                    </label>
+                    <div className={neuInputWrapper}>
+                      <span className="material-symbols-outlined text-secondary text-xl">
+                        call
+                      </span>
+                      <input
+                        type="tel"
+                        maxLength={18}
+                        value={telephoneParent}
+                        onChange={(e) => setTelephoneParent(e.target.value)}
+                        placeholder="+243 81 900 1234"
+                        className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/50 font-medium text-sm"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* 8. Contacts de l'étudiant (email et numéro) */}
-                <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary">
-                    8. Contacts de l&apos;étudiant (email et numéro){" "}
-                    <span className="text-error">*</span>
-                  </label>
-                  <div className={neuInputWrapper}>
-                    <span className="material-symbols-outlined text-secondary text-xl">
-                      contact_phone
+                {/* ============================================================ */}
+                {/* 3. PARCOURS ACADÉMIQUE & ACTIVITÉ */}
+                {/* ============================================================ */}
+                <div className={neuSectionBox}>
+                  <div className="flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="h-6 w-6 rounded-full bg-[#153a70] text-white flex items-center justify-center text-xs font-bold">
+                      3
                     </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Email et numéro WhatsApp *"
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
-                    />
+                    <h2 className="text-sm font-extrabold uppercase tracking-wider text-primary">
+                      Parcours Académique &amp; Activité
+                    </h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Année d’obtention diplôme */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                        <span>Année d’obtention diplôme</span>
+                        <span className="text-[10.5px] text-slate-400 font-normal">2024</span>
+                      </label>
+                      <div className={neuInputWrapper}>
+                        <span className="material-symbols-outlined text-secondary text-xl">
+                          school
+                        </span>
+                        <input
+                          type="text"
+                          value={anneeDiplome}
+                          onChange={(e) => setAnneeDiplome(e.target.value)}
+                          placeholder="2024"
+                          className="w-full bg-transparent border-none focus:outline-none text-on-surface font-medium text-sm"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Dernière année univ. */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                        <span>Dernière année univ.</span>
+                        <span className="text-[10.5px] text-slate-400 font-normal">max 4 chiffres (2024)</span>
+                      </label>
+                      <div className={neuInputWrapper}>
+                        <span className="material-symbols-outlined text-secondary text-xl">
+                          history_edu
+                        </span>
+                        <input
+                          type="text"
+                          maxLength={4}
+                          value={derniereAnneeUniv}
+                          onChange={(e) => setDerniereAnneeUniv(e.target.value)}
+                          placeholder="2024"
+                          className="w-full bg-transparent border-none focus:outline-none text-on-surface font-medium text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Activité actuelle */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-primary pl-1 flex items-center justify-between">
+                      <span>Activité actuelle</span>
+                      <span className="text-[10.5px] text-slate-400 font-normal">0/25 max (Ex: Étudiant / Stagiaire)</span>
+                    </label>
+                    <div className={neuInputWrapper}>
+                      <span className="material-symbols-outlined text-secondary text-xl">
+                        badge
+                      </span>
+                      <input
+                        type="text"
+                        maxLength={25}
+                        value={activiteActuelle}
+                        onChange={(e) => setActiviteActuelle(e.target.value)}
+                        placeholder="Ex: Étudiant / Stagiaire"
+                        className="w-full bg-transparent border-none focus:outline-none text-on-surface font-medium text-sm"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                {/* 9. Nationalité */}
-                <div className="flex flex-col gap-2">
-                  <label className="pl-4 text-xs font-bold uppercase tracking-wider text-primary">
-                    9. Nationalité <span className="text-error">*</span>
-                  </label>
-                  <div className={neuInputWrapper}>
-                    <span className="material-symbols-outlined text-secondary text-xl">
-                      public
+                {/* ============================================================ */}
+                {/* 4. ÉCOLE PARTENAIRE & BUDGET */}
+                {/* ============================================================ */}
+                <div className={neuSectionBox}>
+                  <div className="flex items-center gap-2 border-b border-slate-200/80 pb-2.5">
+                    <span className="h-6 w-6 rounded-full bg-[#ff9900] text-white flex items-center justify-center text-xs font-bold">
+                      4
                     </span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Votre nationalité *"
-                      className="w-full bg-transparent border-none focus:outline-none text-on-surface placeholder:text-on-surface-variant/60 font-body-md"
-                    />
+                    <h2 className="text-sm font-extrabold uppercase tracking-wider text-primary">
+                      École Partenaire &amp; Budget
+                    </h2>
+                  </div>
+
+                  {/* École Partenaire à Lyon */}
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-bold text-primary pl-1">
+                      École Partenaire à Lyon <span className="text-error">*</span>
+                    </label>
+                    <div className="space-y-2">
+                      {partnerSchools.map((school) => {
+                        const active = ecolePartenaire === school.title;
+                        return (
+                          <label
+                            key={school.id}
+                            className={active ? neuRadioSelected : neuRadioDefault}
+                          >
+                            <input
+                              type="radio"
+                              name="ecolePartenaire"
+                              value={school.title}
+                              checked={active}
+                              onChange={(e) => setEcolePartenaire(e.target.value)}
+                              className="h-4 w-4 accent-secondary shrink-0"
+                            />
+                            <div className="flex flex-col">
+                              <span className="text-xs font-extrabold text-[#002452]">
+                                {school.title}
+                              </span>
+                              <span className="text-[11px] text-slate-500">
+                                {school.desc}
+                              </span>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Budget annuel garanti */}
+                  <div className="flex flex-col gap-1.5 pt-2">
+                    <label className="text-xs font-bold text-primary pl-1">
+                      Budget annuel garanti <span className="text-error">*</span>
+                    </label>
+                    <div className={neuInputWrapper}>
+                      <span className="material-symbols-outlined text-secondary text-xl">
+                        euro
+                      </span>
+                      <select
+                        value={budgetAnnuel}
+                        onChange={(e) => setBudgetAnnuel(e.target.value)}
+                        className="w-full bg-transparent border-none focus:outline-none text-on-surface font-medium text-xs sm:text-sm cursor-pointer"
+                      >
+                        <option value="8 500 € – 10 000 € / an">
+                          8 500 € – 10 000 € / an (Standard Recommandé Lyon)
+                        </option>
+                        <option value="10 000 € – 13 000 € / an">
+                          10 000 € – 13 000 € / an (Pack Confort &amp; Famille)
+                        </option>
+                        <option value="6 000 € – 8 500 € / an">
+                          6 000 € – 8 500 € / an (Avec Préfinancement AVI YIMMILINE)
+                        </option>
+                        <option value="Supérieur à 13 000 € / an">
+                          Supérieur à 13 000 € / an
+                        </option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
-                {/* Bouton Principal Style Neumorphism */}
-                <div className="pt-4 flex flex-col items-center gap-4">
+                {/* Bouton de soumission */}
+                <div className="pt-2 flex flex-col items-center gap-3">
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-full bg-secondary hover:bg-primary text-surface font-label-lg text-base font-bold tracking-wide shadow-[6px_6px_16px_#b8c4dd,-6px_-6px_16px_#ffffff] active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.2)] transition-all duration-200 cursor-pointer"
+                    disabled={loading}
+                    className="w-full py-4 rounded-full bg-secondary hover:bg-primary text-surface font-label-lg text-base font-bold tracking-wide shadow-[6px_6px_16px_#b8c4dd,-6px_-6px_16px_#ffffff] active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.2)] transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 disabled:opacity-75"
                   >
-                    Valider mon inscription
+                    {loading ? (
+                      <>
+                        <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                        <span>Transmission en temps réel au Dashboard...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Valider mon inscription • Envoi au Dashboard</span>
+                        <span className="material-symbols-outlined text-xl">send</span>
+                      </>
+                    )}
                   </button>
 
                   <p className="text-xs text-on-surface-variant text-center">
-                    Besoin d’un renseignement d’abord ?{" "}
-                    <Link href="/contact" className="text-primary font-bold hover:underline">
-                      Contacter un conseiller
-                    </Link>{" "}
-                    ou{" "}
-                    <Link href="/" className="text-secondary font-bold hover:underline">
-                      Retour à l’accueil
-                    </Link>
+                    Toutes les informations soumises sont synchronisées immédiatement avec le Dashboard officiel LIEC-ONE.
                   </p>
                 </div>
               </form>
